@@ -1,0 +1,231 @@
+/* ==== Root Theme Variables ==== */
+:root {
+  --bg: #0f1724;
+  --card: #0b1220;
+  --muted: #9aa4b2;
+  --accent: #ffcc00;
+  --success: #7ee787;
+  --danger: #ff6b6b;
+  --glass: rgba(255,255,255,0.03);
+  --gradient-accent: linear-gradient(90deg, #ffcc00, #ff9800);
+  --gradient-success: linear-gradient(90deg, #7ee787, #4ec97e);
+  --gradient-danger: linear-gradient(90deg, #ff6b6b, #ff4d4d);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  height: 100%;
+  font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+  background: linear-gradient(180deg, #071021 0%, #0e1a2a 100%);
+  color: #e6eef6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 980px;
+  margin: 28px auto;
+  padding: 20px;
+}
+
+/* ==== Header ==== */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+h1 {
+  font-size: 28px;
+  letter-spacing: 0.2px;
+}
+.subtitle {
+  color: var(--muted);
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+/* ==== Cards ==== */
+.card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(2,6,23,0.6);
+}
+
+/* ==== Grid Layout ==== */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 16px;
+}
+@media (max-width:880px) {
+  .grid { grid-template-columns: 1fr; }
+  #resultImg { width: 100%; max-width: 360px; }
+}
+
+/* ==== Video ==== */
+#video {
+  width: 100%;
+  border-radius: 8px;
+  background: #000;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ==== Controls ==== */
+.controls {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+button, .file-btn span, select {
+  background: var(--gradient-accent);
+  color: #06121a;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+button:hover, .file-btn span:hover, select:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.4);
+}
+button.secondary {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.file-btn { display: inline-block; }
+select {
+  background: var(--glass);
+  color: #e6eef6;
+}
+
+/* ==== Result Panel ==== */
+.result-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+#resultImg {
+  width: 320px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.05);
+  background: #08121a;
+}
+.badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.badge {
+  background: var(--glass);
+  color: var(--muted);
+  font-weight: 700;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.03);
+  min-width: 130px;
+  text-align: center;
+}
+
+/* ==== Hair Meter ==== */
+.hair-meter {
+  width: 320px;
+  height: 14px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+.hair-meter > div {
+  height: 100%;
+  background: var(--gradient-success);
+  transition: width 0.4s ease;
+}
+
+/* ==== Roast Box ==== */
+.roast {
+  margin-top: 6px;
+  padding: 12px;
+  border-radius: 10px;
+  width: 100%;
+  font-weight: 800;
+  text-align: center;
+  display: none;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+.roast.warn { background: var(--gradient-accent); color: #07121a; }
+.roast.bad { background: var(--gradient-danger); color: #07121a; }
+.roast.celebrate { background: var(--gradient-success); color: #04120a; }
+
+/* ==== Inputs ==== */
+.text-input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.05);
+  background: transparent;
+  color: inherit;
+}
+
+/* ==== Leaderboard ==== */
+#leaderboardPanel {
+  max-height: 420px;
+  overflow: auto;
+}
+#leaderboardContent {
+  line-height: 1.5;
+}
+#leaderboardContent strong {
+  display: block;
+  margin: 6px 0;
+}
+
+/* ==== Switch ==== */
+.toggle-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 8px;
+}
+.switch {
+  --w: 46px;
+  --h: 26px;
+  width: var(--w);
+  height: var(--h);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  position: relative;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  border: 1px solid rgba(255,255,255,0.03);
+}
+.switch .knob {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  transition: all 0.18s ease;
+  box-shadow: 0 4px 8px rgba(2,6,12,0.5);
+}
+.switch.on { background: var(--gradient-accent); }
+.switch.on .knob { left: calc(var(--w) - 23px); }
+
+/* ==== Footer ==== */
+.footer {
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
