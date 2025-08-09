@@ -1,0 +1,282 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>kashandiify — Roast + Leaderboard</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>kashandi Analyzer</h1>
+        <div class="subtitle">A heuristic hairline predictor</div>
+      </div>
+      <div class="small">Made for TinkerHub — Useles Projects 2.0</div>
+    </div>
+
+    <div class="card">
+      <div class="grid">
+        <div>
+          <video id="video" width="640" height="480" autoplay playsinline></video>
+          <canvas id="captureCanvas" width="640" height="480" style="display:none"></canvas>
+
+          <div class="controls">
+            <button id="startBtn">Start Camera</button>
+            <button id="snapBtn" class="secondary">Capture & Analyze</button>
+            <label class="file-btn">
+              <input id="fileInput" type="file" accept="image/*" style="display:none">
+              <span class="secondary" style="padding:8px 12px; display:inline-block">Upload Image</span>
+            </label>
+          </div>
+
+          <div style="margin-top:12px" id="messages"></div>
+        </div>
+
+        <div class="result-panel">
+          <div class="card" style="width:100%; display:flex; flex-direction:column; align-items:center; gap:10px;">
+            <img id="resultImg" src="" alt="" />
+            <div class="badges" id="meta"></div>
+
+            <div class="small">Hair density meter</div>
+            <div class="hair-meter" id="hairMeter">
+              <div id="hairMeterFill" style="width:0%"></div>
+            </div>
+            <div id="hairDensityLabel" class="small"></div>
+
+            <div class="toggle-row">
+              <div style="display:flex;flex-direction:column">
+                <div class="small">Roast Mode</div>
+                <div class="small">Enable for savage predictions</div>
+              </div>
+              <div id="roastSwitch" class="switch" title="Toggle Roast Mode">
+                <div class="knob"></div>
+              </div>
+            </div>
+
+            <div id="roastBox" class="roast"></div>
+
+            <!-- Nickname field & Save button -->
+            <div style="width:100%; margin-top:8px;">
+              <input id="nickname" placeholder="Enter nickname to save" class="text-input" />
+            </div>
+            <button id="saveBtn">Save to Leaderboard</button>
+            <button id="viewLeaderboard">View Leaderboard</button>
+          </div>
+
+          <!-- Leaderboard panel -->
+          <div id="leaderboardPanel" class="card" style="width:100%; display:none; flex-direction:column; gap:8px;">
+            <h3>Leaderboard</h3>
+            <div id="leaderboardContent" class="small"></div>
+            <button id="closeLeaderboard" class="secondary">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer small">
+      Disclaimer: This is a demo — not a medical device. Results are heuristic and for entertainment.
+    </div>
+  </div>
+
+<script>
+const startBtn = document.getElementById('startBtn');
+const snapBtn = document.getElementById('snapBtn');
+const video = document.getElementById('video');
+const canvas = document.getElementById('captureCanvas');
+const ctx = canvas.getContext('2d');
+const fileInput = document.getElementById('fileInput');
+const resultImg = document.getElementById('resultImg');
+const messages = document.getElementById('messages');
+const meta = document.getElementById('meta');
+
+const roastSwitch = document.getElementById('roastSwitch');
+const roastBox = document.getElementById('roastBox');
+let roastOn = false;
+
+const saveBtn = document.getElementById('saveBtn');
+const nicknameInput = document.getElementById('nickname');
+
+const hairMeterFill = document.getElementById('hairMeterFill');
+const hairDensityLabel = document.getElementById('hairDensityLabel');
+
+const viewLeaderboardBtn = document.getElementById('viewLeaderboard');
+const leaderboardPanel = document.getElementById('leaderboardPanel');
+const leaderboardContent = document.getElementById('leaderboardContent');
+const closeLeaderboard = document.getElementById('closeLeaderboard');
+
+let lastResult = null;
+
+// Roast mode toggle
+roastSwitch.addEventListener('click', () => {
+  roastOn = !roastOn;
+  roastSwitch.classList.toggle('on', roastOn);
+  roastBox.style.display = roastOn ? 'block' : 'none';
+  if(!roastOn) roastBox.innerText = '';
+});
+
+// Start camera
+startBtn.onclick = async () => {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"}, audio:false});
+    video.srcObject = stream;
+    messages.innerText = "Camera started. Click Capture & Analyze.";
+  } catch (e) {
+    messages.innerText = "Camera error: " + e.message;
+  }
+};
+
+// Capture from webcam
+snapBtn.onclick = () => {
+  if (!video.srcObject) {
+    messages.innerText = "Camera not started. You can upload an image as well.";
+    return;
+  }
+  ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  const dataUrl = canvas.toDataURL('image/png');
+  analyzeImage(dataUrl);
+};
+
+// Upload file
+fileInput.onchange = (ev) => {
+  const file = ev.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => analyzeImage(reader.result);
+  reader.readAsDataURL(file);
+};
+
+// Analyze image
+async function analyzeImage(dataUrl){
+  messages.innerText = "Analyzing...";
+  resultImg.src = '';
+  meta.innerHTML = '';
+  roastBox.innerText = '';
+  roastBox.className = 'roast';
+  hairMeterFill.style.width = '0%';
+  hairDensityLabel.innerText = '';
+
+  try {
+    const resp = await fetch('/predict', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({image: dataUrl})
+    });
+    const json = await resp.json();
+    if (json.error) {
+      messages.innerText = "Error: " + json.error;
+      return;
+    }
+    messages.innerText = "Done!";
+    resultImg.src = json.annotated;
+    const r = json.result;
+    lastResult = r;
+    meta.innerHTML = `
+      <div class="badge">kashandiness: ${r.kashandiness_pct}%</div>
+      <div class="badge">Est. years to kashandi: ${r.years_left}</div>
+      <div class="badge">Confidence: ${r.confidence}</div>
+      <div class="badge">Forehead ratio: ${r.forehead_ratio}</div>
+    `;
+
+    // Hair meter
+    hairMeterFill.style.width = r.hair_density + '%';
+    hairDensityLabel.innerText = `Hair coverage: ${r.hair_density}%`;
+
+    // Roast mode
+    if (roastOn) {
+      const pct = Number(r.kashandiness_pct);
+      let roastText = "";
+      let cls = "roast warn";
+
+      if (pct <= 10) {
+        roastText = "Relax — your hair is safe. Go flex that mane.";
+        cls = "roast celebrate";
+      } else if (pct <= 30) {
+        roastText = "Cute hairline… for now. Start taking selfies while you still can.";
+        cls = "roast warn";
+      } else if (pct <= 50) {
+        roastText = "Hmm. Your shampoo brand called — it wants answers.";
+        cls = "roast warn";
+      } else if (pct <= 70) {
+        roastText = "Time to practice your head-shine routine. Wigs are expensive, plan ahead.";
+        cls = "roast bad";
+      } else if (pct <= 90) {
+        roastText = "Legend in the making — chrome dome incoming. Invest in a good hat.";
+        cls = "roast bad";
+      } else {
+        roastText = "Behold: future kashandi icon. Embrace the dome and skip shampoo forever.";
+        cls = "roast bad";
+      }
+
+      const extras = [
+        "Your forehead called; it wants royalties.",
+        "Mirror: 'We have to talk.'",
+        "Buy sunscreen. You’ll need it.",
+        "Consider practicing your kashandi head glow-up dance."
+      ];
+      if (Math.random() > 0.75) roastText += " — " + extras[Math.floor(Math.random()*extras.length)];
+
+      roastBox.className = cls;
+      roastBox.innerText = roastText;
+      roastBox.style.display = 'block';
+    }
+  } catch (err) {
+    messages.innerText = "Request failed: " + err;
+  }
+}
+
+// Save to leaderboard
+saveBtn.onclick = async () => {
+  if (!lastResult) {
+    messages.innerText = "Analyze an image first.";
+    return;
+  }
+  const nick = nicknameInput.value.trim() || "Anon";
+  try {
+    const resp = await fetch('/leaderboard/add', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        nickname: nick,
+        kashandiness: lastResult.kashandiness_pct,
+        hair_density: lastResult.hair_density,
+        confidence: lastResult.confidence
+      })
+    });
+    const j = await resp.json();
+    if (j.ok) {
+      messages.innerText = "Saved to leaderboard!";
+    } else {
+      messages.innerText = "Failed to save.";
+    }
+  } catch (e) {
+    messages.innerText = "Save failed: " + e;
+  }
+};
+
+// View leaderboard
+viewLeaderboardBtn.onclick = async () => {
+  try {
+    const resp = await fetch('/leaderboard/top');
+    const j = await resp.json();
+    let html = "<strong>Top kashandi:</strong><br/>";
+    j.top.forEach((r, i) => {
+      html += `${i+1}. ${r.nickname} — ${r.kashandiness}% (hair ${r.hair_density}%)<br/>`;
+    });
+    html += "<hr/>";
+    html += "<strong>Top hair blessed:</strong><br/>";
+    j.bottom.forEach((r, i) => {
+      html += `${i+1}. ${r.nickname} — ${r.kashandiness}% (hair ${r.hair_density}%)<br/>`;
+    });
+    leaderboardContent.innerHTML = html;
+    leaderboardPanel.style.display = 'flex';
+  } catch (e) {
+    messages.innerText = "Failed to load leaderboard.";
+  }
+};
+closeLeaderboard.onclick = () => {
+  leaderboardPanel.style.display = 'none';
+};
+</script>
+</body>
+</html>
