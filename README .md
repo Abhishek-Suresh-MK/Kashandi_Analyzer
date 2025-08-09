@@ -5,92 +5,66 @@
 
 
 ## Basic Details
-### Team Name: [Name]
+### Team Name: GALAXY
 
 
 ### Team Members
-- Team Lead: [Name] - [College]
-- Member 2: [Name] - [College]
-- Member 3: [Name] - [College]
+- Team Lead: Abhishek Suresh M K – College of Engineering, Munnar
+- Member 2:  Radha lakshmi M – College of Engineering, Munnar
 
 ### Project Description
-[2-3 lines about what your project does]
+Kashandii Analyzer is a fun web app that scans your photo or live webcam feed to predict your “kashandiness” (baldness level). It calculates hair density, estimates years until baldness, roasts you for fun, and stores your results on a public leaderboard.
 
 ### The Problem (that doesn't exist)
-[What ridiculous problem are you solving?]
+People walk around without knowing if their hair is plotting a quiet escape. They miss early warning signs and never prepare for the incoming glare.
 
 ### The Solution (that nobody asked for)
-[How are you solving it? Keep it fun!]
+An AI-powered (well… heuristic-powered) baldness predictor that not only calculates your hair’s survival chances but also roasts you mercilessly, for entertainment and public records.
 
 ## Technical Details
 ### Technologies/Components Used
 For Software:
-- [Languages used]
-- [Frameworks used]
-- [Libraries used]
-- [Tools used]
+- Languages used: Python, JavaScript, HTML5, CSS3
+- Frameworks used: Flask
+- Libraries used: OpenCV, Mediapipe, Pillow, NumPy
+- Tools used: VS Code, Git, Browser DevTools
 
 For Hardware:
-- [List main components]
-- [List specifications]
-- [List tools required]
+- webcam
 
-### Implementation
-For Software:
+
 # Installation
-[commands]
+python -m venv venv
+venv\Scripts\activate
+pip install flask opencv-python pillow mediapipe
 
 # Run
-[commands]
+python app.py
 
 ### Project Documentation
 For Software:
 
 # Screenshots (Add at least 3)
-![Screenshot1](Add screenshot 1 here with proper name)
-*Add caption explaining what this shows*
 
-![Screenshot2](Add screenshot 2 here with proper name)
-*Add caption explaining what this shows*
+<img width="1889" height="856" alt="kashandi analyzing page" src="https://github.com/user-attachments/assets/31a27aac-c860-4084-85f1-dc64331ba9de" />
+this is index page of the site from here tha camera is activated and when clicking capture & analyze you w ould get your kashandiness score,hair density and predict when will you go bald.
 
-![Screenshot3](Add screenshot 3 here with proper name)
-*Add caption explaining what this shows*
+ <img width="1881" height="862" alt="roasting and file upload" src="https://github.com/user-attachments/assets/ebba057f-a01e-470b-8a82-fe349bd15582" />
+there is also option to upload your photos and generate the results and there is also a roast section which would roast you baed on your hairline results.
 
-# Diagrams
-![Workflow](Add your workflow/architecture diagram here)
-*Add caption explaining your workflow*
+<img width="1887" height="844" alt="leaderboard" src="https://github.com/user-attachments/assets/623f30c6-dee1-4350-9cd2-5f2dcf63d399" />
+this is the leaderboard section where the user can save their kashandi results and boast about with them with friendss XD
 
-For Hardware:
-
-# Schematic & Circuit
-![Circuit](Add your circuit diagram here)
-*Add caption explaining connections*
-
-![Schematic](Add your schematic diagram here)
-*Add caption explaining the schematic*
-
-# Build Photos
-![Components](Add photo of your components here)
-*List out all components shown*
-
-![Build](Add photos of build process here)
-*Explain the build steps*
-
-![Final](Add photo of final product here)
-*Explain the final build*
 
 ### Project Demo
 # Video
-[Add your demo video link here]
-*Explain what the video demonstrates*
+https://drive.google.com/file/d/1rOB2JooTM2x9H6GeWm4f5Mm7Nnrz016z/view?usp=drive_link
 
-# Additional Demos
-[Add any extra demo materials/links]
+Takes the photos as input either using webcam or file upload calculate your kashandiness percentage,estimated years to be kashandied,forehead ratio, hair density etc.There is also a roast section which will roast you based on the result.You can save your result in the leaderboard.There are 2 leaderboard one is the top kashandi and other is top hair blessed.Please do watch the video XD
 
 ## Team Contributions
-- [Name 1]: [Specific contributions]
-- [Name 2]: [Specific contributions]
-- [Name 3]: [Specific contributions]
+- Abhishek Suresh M K: Idea,backend
+- Radha lakshmi: ui frontend,feature suggestionss
 
 ---
 Made with ❤️ at TinkerHub Useless Projects 
